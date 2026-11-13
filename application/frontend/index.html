@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EC2 Server Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>EC2 Server Dashboard - Terraform Modulo 5</h1>
+    <p>Servido por Nginx na porta 80, com backend Python em <code>127.0.0.1:8000</code>.</p>
+    <p id="estado" role="status" aria-live="polite">Carregando...</p>
+  </header>
+
+  <main>
+    <section aria-labelledby="t-instancia">
+      <h2 id="t-instancia">Instância</h2>
+      <dl id="instancia"></dl>
+    </section>
+    <section aria-labelledby="t-sistema">
+      <h2 id="t-sistema">Sistema</h2>
+      <dl id="sistema"></dl>
+    </section>
+    <section aria-labelledby="t-recursos">
+      <h2 id="t-recursos">Recursos</h2>
+      <dl id="recursos"></dl>
+    </section>
+  </main>
+
+  <footer>
+    <p>Dados de <a href="/api/status">/api/status</a>, atualizados a cada 5 segundos.</p>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

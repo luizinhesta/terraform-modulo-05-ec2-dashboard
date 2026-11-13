@@ -1,0 +1,37 @@
+#!/bin/bash
+# User Data renderizado pelo Terraform (templatefile). Executado UMA vez, como root,
+# pelo cloud-init no primeiro boot. Log: /var/log/dashboard-bootstrap.log
+set -euo pipefail
+exec > >(tee -a /var/log/dashboard-bootstrap.log) 2>&1
+echo "== bootstrap iniciado em $(date -u +%FT%TZ) =="
+
+export DEBIAN_FRONTEND=noninteractive
+
+# 1) Atualiza índices e instala dependências (espera o lock do apt, se houver).
+apt-get -o DPkg::Lock::Timeout=300 update -y
+apt-get -o DPkg::Lock::Timeout=300 install -y nginx python3
+
+# 2) Usuário de sistema sem login para executar o backend.
+id -u dashboard >/dev/null 2>&1 || useradd --system --no-create-home --shell /usr/sbin/nologin dashboard
+
+# 3) Grava os arquivos da aplicação. Cada conteúdo foi comprimido (gzip) e
+#    codificado em base64 pelo Terraform (base64gzip) e vem embutido neste script.
+%{ for dest, content in files ~}
+install -d -m 0755 "$(dirname '${dest}')"
+echo '${content}' | base64 -d | gunzip > '${dest}'
+%{ endfor ~}
+chmod 0755 /opt/dashboard/server.py
+chmod 0644 /etc/systemd/system/dashboard.service /etc/nginx/conf.d/dashboard.conf
+chmod -R a+rX /var/www/dashboard
+
+# 4) Nginx: remove o site padrão, valida e habilita na inicialização.
+rm -f /etc/nginx/sites-enabled/default
+nginx -t
+
+# 5) systemd: registra o backend, habilita no boot e inicia.
+systemctl daemon-reload
+systemctl enable --now dashboard.service
+systemctl enable nginx
+systemctl restart nginx
+
+echo "== bootstrap concluido em $(date -u +%FT%TZ) =="

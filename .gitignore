@@ -1,0 +1,61 @@
+# ============================================================
+# .gitignore - Modulo 05 (EC2 Dashboard)
+# Nada daqui deve ir para o GitHub publico.
+# ============================================================
+
+# --- State do Terraform (contem ID da conta, ARNs, IDs de recursos, IPs) ---
+*.tfstate
+*.tfstate.*
+terraform.tfstate.d/
+.terraform.tfstate.lock.info
+
+# --- Providers baixados pelo "terraform init" (binario com ~775 MB) ---
+.terraform/
+**/.terraform/
+
+# --- Variaveis reais do seu ambiente ---
+# Os arquivos *.tfvars.example continuam versionados.
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+!*.tfvars.example
+
+# --- Planos salvos (contem valores resolvidos do seu ambiente) ---
+*.tfplan
+tfplan
+plan.out
+
+# --- Logs e dumps de erro ---
+crash.log
+crash.*.log
+
+# --- Overrides locais e configuracao da CLI ---
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# --- Credenciais e segredos ---
+.env
+.env.*
+.aws/
+*.pem
+*.key
+*credentials*
+*.secret
+
+# --- Rascunhos e anotacoes pessoais ---
+rascunho*/
+notas*/
+*.bak
+
+# --- Sistema e editores ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Observacao: .terraform.lock.hcl DEVE ser versionado (trava a versao do provider).
